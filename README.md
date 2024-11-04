@@ -1,4 +1,4 @@
-# Snake Game
+# Games
 
 Welcome to **Games**! 
 Here I'll recreate popular video games! 
