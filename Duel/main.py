@@ -34,6 +34,7 @@ FPS = 60
 font = pygame.font.SysFont("arial", 30)
 large_font = pygame.font.SysFont("comicsansms", 50)
 
+
 def game_loop():
     # Выбор уровня сложности
     difficulty = select_difficulty()
