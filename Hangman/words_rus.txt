@@ -1,4 +1,11 @@
-время
-слово
-город
-число
+SEMEN
+LILIA
+ANYA
+EDIK
+MARIA
+SASHA
+MAYA
+LYOVA
+BORYA
+YOSYA
+SANDRA
