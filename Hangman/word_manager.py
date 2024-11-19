@@ -1,22 +1,21 @@
-# word_manager.py
-
 import random
+
 
 class WordManager:
     def __init__(self, filepath):
         """
-        Инициализирует менеджер слов.
+        Initializes the word manager.
 
-        :param filepath: Путь к файлу со списком слов.
+        :param filepath: Path to the file with the word list.
         """
         self.filepath = filepath
         self.words = self.load_words()
 
     def load_words(self):
         """
-        Загружает слова из файла.
+        Loads words from a file.
 
-        :return: Список слов.
+        :return: List of words.
         """
         with open(self.filepath, 'r', encoding='utf-8') as file:
             words = [line.strip().upper() for line in file if line.strip()]
@@ -24,8 +23,11 @@ class WordManager:
 
     def get_random_word(self):
         """
-        Выбирает случайное слово из списка.
+        Selects a random word from the list.
 
-        :return: Строка с выбранным словом.
+        :return: String with the selected word.
         """
         return random.choice(self.words)
+
+
+

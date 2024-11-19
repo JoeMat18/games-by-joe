@@ -1,5 +1,3 @@
-# constants.py
-
 import pygame
 
 # Цвета (RGB)

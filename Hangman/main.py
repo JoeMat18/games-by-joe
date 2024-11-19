@@ -1,27 +1,23 @@
-# main.py
-
-import pygame
 import sys
 
 from hangman import Hangman
 from word_manager import WordManager
-from utils import draw_text, play_correct_sound, play_wrong_sound, play_victory_sound, play_defeat_sound, display_score
+from utils import draw_text, play_correct_sound, play_wrong_sound, play_defeat_sound, play_victory_sound, display_score
 from constants import *
 
 
 def game_loop():
-    # Инициализация Pygame
     pygame.init()
 
-    # Настройка экрана
+    # Screen settings
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
-    pygame.display.set_caption("")
+    pygame.display.set_caption("Hangman")
 
-    # Настройка часов для контроля FPS
+    # FPS
     clock = pygame.time.Clock()
 
-    # Создание объектов игры
-    word_manager = WordManager("words_rus.txt")
+    # Create game objects
+    word_manager = WordManager("words.txt")
     word = word_manager.get_random_word()
     hangman = Hangman()
 
@@ -31,8 +27,9 @@ def game_loop():
     max_attempts = 6
     game_over = False
     win = False
+    score_update = False
 
-    # Счётчики побед
+    # Victory count
     player_score = 0
     computer_score = 0
 
@@ -45,7 +42,7 @@ def game_loop():
                 sys.exit()
 
             if event.type == pygame.KEYDOWN and not game_over:
-                if event.key >= pygame.K_a and event.key <= pygame.K_z:
+                if pygame.K_a <= event.key <= pygame.K_z:
                     letter = pygame.key.name(event.key).upper()
                     if letter not in guessed_letters:
                         guessed_letters.append(letter)
@@ -57,7 +54,7 @@ def game_loop():
                             hangman.draw_next_part(screen)
                             play_wrong_sound()
 
-        # Отображение состояния слова
+        # Displaying the state of a word
         display_word = ""
         for letter in word:
             if letter in correct_letters:
@@ -67,23 +64,23 @@ def game_loop():
 
         draw_text(display_word, FONT, WHITE, screen, WIDTH // 2, HEIGHT // 2 + 180)
 
-        # Отображение списка угаданных букв
+        # Displaying a list of guessed letters
         correct_guesses = [letter for letter in guessed_letters if letter in word]
         wrong_guesses = [letter for letter in guessed_letters if letter not in word]
 
-        correct_text = "Правильные буквы: " + ", ".join(correct_guesses)
-        wrong_text = "Неправильные буквы: " + ", ".join(wrong_guesses)
+        correct_text = "Correct letters: " + ", ".join(correct_guesses)
+        wrong_text = "Wrong letters: " + ", ".join(wrong_guesses)
 
-        draw_text(correct_text, FONT, GREEN, screen, WIDTH // 2, HEIGHT // 2 + 230)
-        draw_text(wrong_text, FONT, RED, screen, WIDTH // 2, HEIGHT // 2 + 260)
+        draw_text(correct_text, FONT, GREEN, screen, WIDTH // 2, HEIGHT // 2 + 220)
+        draw_text(wrong_text, FONT, RED, screen, WIDTH // 2, HEIGHT // 2 + 250)
 
-        # Отображение счёта
+        # Display score
         display_score(screen, FONT, player_score, computer_score)
 
-        # Отрисовка виселицы
+        # Drawing of the gallows
         hangman.draw(screen)
 
-        # Проверка условий завершения игры
+        # Checking the game end conditions
         if attempts >= max_attempts:
             game_over = True
             win = False
@@ -91,22 +88,27 @@ def game_loop():
             game_over = True
             win = True
 
-        if game_over:
+        if game_over and not score_update:
             if win:
                 player_score += 1
-                play_victory_sound()
-                message = "Поздравляем! Вы выиграли!"
             else:
                 computer_score += 1
+            score_update = True
+
+        if game_over:
+            if win:
+                message = "You won! Congratulations!"
+                play_victory_sound()
+            else:
+                message = f"You lost! The words was: {word}"
                 play_defeat_sound()
-                message = f"Вы проиграли! Слово было: {word}"
-            draw_text(message, LARGE_FONT, YELLOW, screen, WIDTH // 2, HEIGHT // 2 - 200)
-            draw_text("Нажмите R для повторной игры или Q для выхода", FONT, WHITE, screen, WIDTH // 2,
-                      HEIGHT // 2 - 150)
+
+            draw_text(message, LARGE_FONT, YELLOW, screen, WIDTH // 2, HEIGHT // 2 - 150)
+            draw_text("Press R to replay or Q to quit ", FONT, BLUE, screen, WIDTH // 2, HEIGHT - 170)
 
             keys = pygame.key.get_pressed()
             if keys[pygame.K_r]:
-                # Сброс игры
+                # Game reset
                 word = word_manager.get_random_word()
                 hangman.reset()
                 guessed_letters = []
@@ -114,6 +116,7 @@ def game_loop():
                 attempts = 0
                 game_over = False
                 win = False
+                score_update = False
             elif keys[pygame.K_q]:
                 pygame.quit()
                 sys.exit()
